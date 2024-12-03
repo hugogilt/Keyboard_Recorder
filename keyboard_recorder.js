@@ -1,3 +1,4 @@
+// Crear y estilizar el círculo de grabación
 const circle = document.createElement('div');
 circle.style.position = 'fixed';
 circle.style.boxSizing = 'content-box';
@@ -21,7 +22,7 @@ circle.textContent = 'REC';
 // Añadir el círculo al body
 document.body.appendChild(circle);
 
-// Estilo para la animación de parpadeo más lento
+// Estilo para la animación de parpadeo
 const styleSheet = document.createElement('style');
 styleSheet.type = 'text/css';
 styleSheet.innerText = `
@@ -47,9 +48,14 @@ document.head.appendChild(styleSheet);
 let capturingKeys = false;
 let capturedKeys = '';
 
+// Teclas que deben ser ignoradas siempre
+const ignoredKeys = ['Tab', 'CapsLock', 'Escape'];
+
 // Función para iniciar/detener la captura
 document.addEventListener('keydown', function (e) {
+    // Si se presiona Ctrl/Cmd + 0, alternar captura
     if ((e.metaKey || e.ctrlKey) && e.key === '0') {
+        e.preventDefault(); // Prevenir comportamiento predeterminado
         if (capturingKeys) {
             // Detener la captura
             capturingKeys = false;
@@ -68,7 +74,34 @@ document.addEventListener('keydown', function (e) {
         }
     }
 
-    if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-        capturedKeys += e.key; // Capturar las teclas
+    // Ignorar las teclas no deseadas
+    if (ignoredKeys.includes(e.key)) {
+        return;
+    }
+
+    // Capturar teclas válidas durante la grabación
+    if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        if (e.key === 'Backspace') {
+            // Borrar el último carácter de la variable
+            capturedKeys = capturedKeys.slice(0, -1);
+        } else if (e.key === 'Enter') {
+            // Agregar un salto de línea
+            capturedKeys += '\n';
+        } else {
+            // Agregar la tecla a la variable
+            capturedKeys += e.key;
+        }
+
+        // Actualizar el portapapeles
+        navigator.clipboard.writeText(capturedKeys).then(() => {
+            console.log('Texto actualizado en el portapapeles:', capturedKeys);
+        });
+    }
+
+    // Si se presiona Ctrl/Cmd + V, detener captura
+    if (capturingKeys && (e.metaKey || e.ctrlKey) && e.key === 'v') {
+        capturingKeys = false;
+        circle.style.display = 'none'; // Ocultar el círculo
+        console.log('Captura finalizada y texto pegado');
     }
 });
