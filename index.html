@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captura de Teclas</title>
+    <style>
+        /* Estilos del círculo rojo */
+        #circle {
+            position: fixed;
+            box-sizing: content-box;
+            top: 10px;
+            right: 10px;
+            width: 60px;  /* Mantener un círculo pequeño */
+            height: 60px; /* Igual que el ancho para mantener la forma circular */
+            border-radius: 50%; /* Asegura que sea un círculo */
+            background-color: red;
+            z-index: 9999;
+            display: none; /* Inicialmente está oculto */
+            text-align: center;
+            line-height: 60px; /* Centra el texto verticalmente */
+            font-size: 14px; /* Hacemos el texto aún más pequeño */
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Estilo para la animación de parpadeo más lento */
+        @keyframes blinking {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .circle {
+            animation: blinking 1s infinite;  /* Hacemos el parpadeo más lento con 1 segundo */
+        }
+
+        /* Estilo para el input */
+        input {
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            width: 300px;
+            margin-left: 10px;
+        }
+
+        /* Estilo para las instrucciones */
+        .instructions {
+            font-size: 16px;
+            color: #333;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            margin-left: 10px;
+        }
+
+        .instructions h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: red;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Instrucciones -->
+    <div class="instructions">
+        <h2>Instrucciones:</h2>
+        <p>1. Para empezar a capturar las teclas, presiona <strong>Command + 0</strong> (macOS) o <strong>Ctrl + 0</strong> (Windows).</p>
+        <p>2. Escribe algo en el campo de texto que aparece debajo para capturar las teclas que presionas.</p>
+        <p>3. Para detener la captura y guardar el texto en el portapapeles, presiona nuevamente <strong>Command + 0</strong> o <strong>Ctrl + 0</strong>.</p>
+        <p>4. El círculo rojo con el texto <strong>REC</strong> parpadeará cuando esté capturando.</p>
+    </div>
+
+    <!-- Input para probar la captura -->
+    <input type="text" id="inputText" placeholder="Escribe algo aquí...">
+
+    <script>
+        // Crear el círculo rojo con el texto "REC"
+        const circle = document.createElement('div');
+        circle.id = 'circle';
+        circle.textContent = 'REC'; // El texto será "REC"
+        document.body.appendChild(circle);
+
+        // Variables para capturar las teclas
+        let capturingKeys = false;
+        let capturedKeys = '';
+
+        // Función para iniciar/detener la captura
+        document.addEventListener('keydown', function (e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === '0') {
+                if (capturingKeys) {
+                    // Detener la captura
+                    capturingKeys = false;
+                    console.log('Captura detenida');
+                    circle.style.display = 'none'; // Ocultar el círculo
+                    navigator.clipboard.writeText(capturedKeys).then(() => {
+                        console.log('Texto guardado en el portapapeles:', capturedKeys);
+                    });
+                } else {
+                    // Iniciar la captura
+                    capturingKeys = true;
+                    capturedKeys = '';
+                    console.log('Captura iniciada');
+                    circle.style.display = 'block'; // Mostrar el círculo
+                    circle.classList.add('circle');  // Añadimos la clase para activar la animación de parpadeo
+                }
+            }
+
+            if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                capturedKeys += e.key; // Capturar las teclas
+            }
+        });
+    </script>
+</body>
+</html>
