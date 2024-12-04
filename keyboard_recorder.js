@@ -1,3 +1,13 @@
+/**
+ * © 2024 Hugo Gil Tejero. Todos los derechos reservados.
+ *
+ * Este código es propiedad intelectual de Hugo Gil Tejero, desarrollador independiente.
+ * Queda prohibida la copia, modificación, distribución o uso no autorizado de este código 
+ * en cualquier forma sin el permiso previo por escrito del autor.
+ *
+ * Para consultas o solicitudes de permiso, por favor contacta a: hugogiltejero@gmail.com
+ */
+
 // Crear y estilizar el círculo de grabación
 const circle = document.createElement('div');
 circle.style.position = 'fixed';
