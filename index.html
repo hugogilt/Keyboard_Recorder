@@ -67,44 +67,33 @@
     <input type="text" id="inputText" placeholder="Escribe algo aquí...">
 
     <script>
-        /**
-         * © 2024 Hugo Gil Tejero. Todos los derechos reservados.
-         *
-         * Este código es propiedad intelectual de Hugo Gil Tejero, desarrollador independiente.
-         * Queda prohibida la copia, modificación, distribución o uso no autorizado de este código 
-         * en cualquier forma sin el permiso previo por escrito del autor.
-         *
-         * Para consultas o solicitudes de permiso, por favor contacta a: hugogiltejero@gmail.com
-         */
+   // Crear y estilizar el círculo de grabación
+const circle = document.createElement('div');
+circle.style.position = 'fixed';
+circle.style.boxSizing = 'content-box';
+circle.style.top = '10px';
+circle.style.right = '10px';
+circle.style.width = '60px';  
+circle.style.height = '60px'; 
+circle.style.borderRadius = '50%';
+circle.style.backgroundColor = 'red';
+circle.style.zIndex = '9999999999999999999999999999999999999999999';
+circle.style.display = 'none';
+circle.style.textAlign = 'center';
+circle.style.lineHeight = '60px';
+circle.style.fontSize = '14px';
+circle.style.color = 'white';
+circle.style.fontWeight = 'bold';
 
-        // Crear y estilizar el círculo de grabación
-        const circle = document.createElement('div');
-        circle.style.position = 'fixed';
-        circle.style.boxSizing = 'content-box';
-        circle.style.top = '10px';
-        circle.style.right = '10px';
-        circle.style.width = '60px';  // Mantener un círculo pequeño
-        circle.style.height = '60px'; // Igual que el ancho para mantener la forma circular
-        circle.style.borderRadius = '50%'; // Asegura que sea un círculo
-        circle.style.backgroundColor = 'red';
-        circle.style.zIndex = '9999999999999999999999999999999999999999999';
-        circle.style.display = 'none'; // Inicialmente está oculto
-        circle.style.textAlign = 'center';
-        circle.style.lineHeight = '60px'; // Centra el texto verticalmente
-        circle.style.fontSize = '14px'; // Hacemos el texto aún más pequeño
-        circle.style.color = 'white';
-        circle.style.fontWeight = 'bold';
+circle.textContent = 'REC';
 
-        // Añadir el texto "REC" dentro del círculo
-        circle.textContent = 'REC';
+// Añadir el círculo al body
+document.body.appendChild(circle);
 
-        // Añadir el círculo al body
-        document.body.appendChild(circle);
-
-        // Estilo para la animación de parpadeo
-        const styleSheet = document.createElement('style');
-        styleSheet.type = 'text/css';
-        styleSheet.innerText = `
+// Estilo para la animación de parpadeo
+const styleSheet = document.createElement('style');
+styleSheet.type = 'text/css';
+styleSheet.innerText = `
 @keyframes blinking {
     0% {
         opacity: 1;
@@ -118,72 +107,66 @@
 }
 
 .circle {
-    animation: blinking 1s infinite;  // Hacemos el parpadeo más lento con 2 segundos
+    animation: blinking 1s infinite;
 }
 `;
-        document.head.appendChild(styleSheet);
+document.head.appendChild(styleSheet);
 
-        // Variables para capturar las teclas
-        let capturingKeys = false;
-        let capturedKeys = '';
+// Variables para capturar las teclas
+let capturingKeys = false;
+let capturedKeys = '';
 
-        // Teclas que deben ser ignoradas siempre
-        const ignoredKeys = ['Tab', 'CapsLock', 'Escape'];
+// Teclas que deben ser ignoradas siempre
+const ignoredKeys = ['Tab', 'CapsLock', 'Escape'];
 
-        // Función para iniciar/detener la captura
-        document.addEventListener('keydown', function (e) {
-            // Si se presiona Ctrl/Cmd + 0, alternar captura
-            if ((e.metaKey || e.ctrlKey) && e.key === '0') {
-                e.preventDefault(); // Prevenir comportamiento predeterminado
-                if (capturingKeys) {
-                    // Detener la captura
-                    capturingKeys = false;
-                    console.log('Captura detenida');
-                    circle.style.display = 'none'; // Ocultar el círculo
-                    navigator.clipboard.writeText(capturedKeys).then(() => {
-                        console.log('Texto guardado en el portapapeles:', capturedKeys);
-                    });
-                } else {
-                    // Iniciar la captura
-                    capturingKeys = true;
-                    capturedKeys = '';
-                    console.log('Captura iniciada');
-                    circle.style.display = 'block'; // Mostrar el círculo
-                    circle.classList.add('circle');  // Añadimos la clase para activar la animación de parpadeo
-                }
-            }
+// Función para iniciar/detener la captura
+document.addEventListener('keydown', function (e) {
+    // Si se presiona Ctrl/Cmd + 0, alternar captura
+    if ((e.metaKey || e.ctrlKey) && e.key === '0') {
+        e.preventDefault();
+        if (capturingKeys) {
+            // Detener la captura
+            capturingKeys = false;
+            circle.style.display = 'none';
+            navigator.clipboard.writeText(capturedKeys).then(() => {});
+        } else {
+            // Iniciar la captura
+            capturingKeys = true;
+            capturedKeys = '';
+            circle.style.display = 'block';
+            circle.classList.add('circle');
+        }
+    }
 
-            // Ignorar las teclas no deseadas
-            if (ignoredKeys.includes(e.key)) {
-                return;
-            }
+    // Ignorar las teclas no deseadas
+    if (ignoredKeys.includes(e.key)) {
+        return;
+    }
 
-            // Capturar teclas válidas durante la grabación
-            if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
-                if (e.key === 'Backspace') {
-                    // Borrar el último carácter de la variable
-                    capturedKeys = capturedKeys.slice(0, -1);
-                } else if (e.key === 'Enter') {
-                    // Agregar un salto de línea
-                    capturedKeys += '\n';
-                } else {
-                    // Agregar la tecla a la variable
-                    capturedKeys += e.key;
-                }
+    // Capturar teclas válidas durante la grabación
+    if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        if (e.key === 'Backspace') {
+            // Borrar el último carácter de la variable
+            capturedKeys = capturedKeys.slice(0, -1);
+        } else if (e.key === 'Enter') {
+            // Agregar un salto de línea
+            capturedKeys += '\n';
+        } else if (e.key.length === 1) {
+            // Capturar solo caracteres imprimibles
+            capturedKeys += e.key;
+        }
 
-                // Actualizar el portapapeles
-                navigator.clipboard.writeText(capturedKeys).then(() => {
-                    console.log('Texto actualizado en el portapapeles:', capturedKeys);
-                });
-            }
+        // Actualizar el portapapeles
+        if(capturedKeys.length !== 0)
+        navigator.clipboard.writeText(capturedKeys).then(() => {});
+    }
 
-            // Si se presiona Ctrl/Cmd + V, detener captura
-            if (capturingKeys && (e.metaKey || e.ctrlKey) && e.key === 'v') {
-                capturingKeys = false;
-                circle.style.display = 'none'; // Ocultar el círculo
-                console.log('Captura finalizada y texto pegado');
-            }
-        });
+    // Si se presiona Ctrl/Cmd + V, detener captura
+    if (capturingKeys && (e.metaKey || e.ctrlKey) && e.key === 'v') {
+        capturingKeys = false;
+        circle.style.display = 'none'; // Ocultar el círculo
+    }
+});
 
     </script>
 </body>

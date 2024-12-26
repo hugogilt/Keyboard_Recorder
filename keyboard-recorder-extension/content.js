@@ -70,8 +70,7 @@ document.addEventListener('keydown', function (e) {
             // Detener la captura
             capturingKeys = false;
             circle.style.display = 'none';
-            navigator.clipboard.writeText(capturedKeys).then(() => {
-            });
+            navigator.clipboard.writeText(capturedKeys).then(() => {});
         } else {
             // Iniciar la captura
             capturingKeys = true;
@@ -87,21 +86,21 @@ document.addEventListener('keydown', function (e) {
     }
 
     // Capturar teclas válidas durante la grabación
-    if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+    if (capturingKeys && !e.metaKey && !e.ctrlKey && !e.altKey) {
         if (e.key === 'Backspace') {
             // Borrar el último carácter de la variable
             capturedKeys = capturedKeys.slice(0, -1);
         } else if (e.key === 'Enter') {
             // Agregar un salto de línea
             capturedKeys += '\n';
-        } else {
-            // Agregar la tecla a la variable
+        } else if (e.key.length === 1) {
+            // Capturar solo caracteres imprimibles
             capturedKeys += e.key;
         }
 
         // Actualizar el portapapeles
-        navigator.clipboard.writeText(capturedKeys).then(() => {
-        });
+        if(capturedKeys.length !== 0)
+        navigator.clipboard.writeText(capturedKeys).then(() => {});
     }
 
     // Si se presiona Ctrl/Cmd + V, detener captura
